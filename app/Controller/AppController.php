@@ -31,4 +31,23 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+
+	public $components = array(
+		'Session',
+		'Auth' => array(
+			'loginRedirect' => array( 'controller' => 'pages', 'action' => 'index' ),
+			'logoutRedirect' => array('controller' => 'users', 'action' => 'login')
+		)
+	);
+	
+	public function beforeRender () {
+        //$admin = Configure::read('Routing.admin');
+		$admin = 'admin';
+        if (isset($this->params[$admin]) && $this->params[$admin]) {
+            $this->layout = (!$this->Auth->loggedIn())?'admin/login':'admin/default';
+		} else {
+			$this->layout = ( !$this->Auth->loggedIn() )?'login':'default';
+		}
+    }
+	
 }
